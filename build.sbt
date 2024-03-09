@@ -3,12 +3,12 @@ ThisBuild / versionScheme := Some("semver-spec")
 
 publish / skip := true
 
-lazy val cross_template = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+lazy val json5 = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .settings(
-    name := "cross-template",
+    name := "json5",
     version := "0.0.1",
-    scalaVersion := "3.3.1",
+    scalaVersion := "3.4.0",
     scalacOptions ++=
       Seq(
         "-deprecation",
@@ -22,7 +22,7 @@ lazy val cross_template = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     organization := "io.github.edadma",
     githubOwner := "edadma",
     githubRepository := name.value,
-//    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.17" % "test",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % "3.2.18" % "test",
 //    libraryDependencies ++= Seq(
 //      "io.github.edadma" %%% "cross-platform" % "0.1.5"
 //    ),
