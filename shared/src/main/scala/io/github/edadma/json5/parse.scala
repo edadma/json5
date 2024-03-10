@@ -20,8 +20,8 @@ def parse(r: CharReader): Value =
         val (r1, n) = consumeWhile(r, c => c.isDigit || c == '.')
 
         (skipWhitespace(r1), NumberValue(n))
-      case '[' => parseArray(r.next)
-//      case '{' => parseObject(r.next)
+      case '[' => parseArray(skipWhitespace(r.next))
+//      case '{' => parseObject(skipWhitespace(r.next))
       case 'n' | 't' | 'f' =>
         val (r1, s) = consumeWhile(r, _.isLetter)
         val r2 = skipWhitespace(r1)
