@@ -3,7 +3,7 @@ package io.github.edadma.json5
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 
-class Tests extends AnyFreeSpec with Matchers {
+class Tests extends AnyFreeSpec with Matchers:
 
   "number" in {
     parseValueFromString("123") shouldBe NumberValue("123")
@@ -42,5 +42,3 @@ class Tests extends AnyFreeSpec with Matchers {
   "false" in {
     parseValueFromString("false") shouldBe BooleanValue(false)
   }
-
-}
