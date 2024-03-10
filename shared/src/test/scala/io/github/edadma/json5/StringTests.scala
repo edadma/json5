@@ -18,5 +18,5 @@ class StringTests extends AnyFreeSpec with Matchers:
   }
 
   "string escapes" in {
-    parseFromString(raw" '\b' ") shouldBe StringValue(" \b ")
+    parseFromString(raw" '\b' ") shouldBe StringValue("\b")
   }
