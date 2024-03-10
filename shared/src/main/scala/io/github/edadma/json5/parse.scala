@@ -81,7 +81,16 @@ def parse(r: CharReader): Value =
             case 'b' =>
               buf += '\b'
               consume(r.next.next)
-            case _ => r.next.error("unknown escape")
+            case 'f' =>
+              buf += '\f'
+              consume(r.next.next)
+            case 'n' =>
+              buf += '\n'
+              consume(r.next.next)
+            case 'r' =>
+              buf += '\r'
+              consume(r.next.next)
+        case _ => r.next.error("unknown escape")
         case c =>
           buf += c
           consume(r.next)
