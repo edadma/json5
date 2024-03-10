@@ -11,6 +11,7 @@ def parseFromString(input: String): Value = parse(CharReader.fromString(input))
 def parseFromFile(file: String): Value = parse(CharReader.fromFile(file))
 
 private val identifierRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
+private val numberRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
 
 def parse(r: CharReader): Value =
   def parseValue(r: CharReader): (CharReader, Value) =
@@ -41,7 +42,7 @@ def parse(r: CharReader): Value =
         case _   => (r, false)
 
     val (r2, n) =
-      consumeWhile(r1, c => c.isDigit || c == '.' || c == 'x' || c == 'e' || c == 'E' || c == '-' || c == '+')
+      consumeWhile(r1, c => c.isDigit || ".xX-+aAbBcCdDeEfF".contains(c))
 
     (skipWhitespace(r2), NumberValue(if neg then s"-$n" else n))
 
