@@ -31,7 +31,14 @@ def parse(r: CharReader): Value =
           case "true"  => (r2, BooleanValue(true))
           case "false" => (r2, BooleanValue(false))
           case _       => r.error("unknown literal")
-      case _ => r.error("a value was expected")
+      case '\'' | '"' => parseString(r)
+      case _          => r.error("a value was expected")
+
+  def parseString(r: CharReader): (CharReader, StringValue) =
+    val delim = r.ch
+    val (r1, s) = consumeWhile(r.next, _ != delim)
+
+    (skipWhitespace(r1.next), StringValue(s))
 
   def parseArray(r: CharReader): (CharReader, ArrayValue) =
     val buf = new ListBuffer[Value]
@@ -54,7 +61,7 @@ def parse(r: CharReader): Value =
 
     parseArray(r)
 
-  def parseObject(r: CharReader): (CharReader, Value) =
+  def parseObject(r: CharReader): (CharReader, ObjectValue) =
     val buf = new ListBuffer[(String, Value)]
     var comma: Boolean = false
 

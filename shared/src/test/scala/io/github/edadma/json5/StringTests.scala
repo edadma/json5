@@ -5,6 +5,10 @@ import org.scalatest.matchers.should.Matchers
 
 class StringTests extends AnyFreeSpec with Matchers:
 
-  "number" in {
-    parseFromString(" 123 ") shouldBe NumberValue("123")
+  "string using single quotes" in {
+    parseFromString(" 'asdf' ") shouldBe StringValue("asdf")
+  }
+
+  "string using double quotes" in {
+    parseFromString(""" "asdf" """) shouldBe StringValue("asdf")
   }
