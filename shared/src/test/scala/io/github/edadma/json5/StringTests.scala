@@ -18,5 +18,5 @@ class StringTests extends AnyFreeSpec with Matchers:
   }
 
   "string escapes" in {
-    parseFromString(raw""" '\'\"\\\b\f\n\r' """) shouldBe StringValue("\'\"\\\b\f\n\r")
+    parseFromString(raw""" '\'\"\\\b\f\n\r\t\v\0' """) shouldBe StringValue("\'\"\\\b\f\n\r\t\u000B\u0000")
   }
