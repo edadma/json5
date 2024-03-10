@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers
 
 import scala.collection.immutable.ListMap
 
-class OjectTests extends AnyFreeSpec with Matchers:
+class ObjectTests extends AnyFreeSpec with Matchers:
 
   "empty object" in {
     parseFromString(" { } ") shouldBe ObjectValue(ListMap())
