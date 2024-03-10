@@ -4,11 +4,14 @@ import io.github.edadma.char_reader.CharReader
 import io.github.edadma.char_reader.CharReader.EOI
 
 import scala.annotation.tailrec
+import scala.collection.immutable.ListMap
 import scala.collection.mutable.ListBuffer
 
 def parseFromString(input: String): Value = parse(CharReader.fromString(input))
 
 def parseFromFile(file: String): Value = parse(CharReader.fromFile(file))
+
+private val identifierRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
 
 def parse(r: CharReader): Value =
   def parseValue(r: CharReader): (CharReader, Value) =
@@ -51,32 +54,34 @@ def parse(r: CharReader): Value =
 
     parseArray(r)
 
-//  def parseObject(r: CharReader): (CharReader, Value) =
-//    val buf = new ListBuffer[(String, Value)]
-//
-//    def parseIdentifier(r: CharReader): (CharReader, String) =
-//
-//    def parseProperty(r: CharReader): Unit =
-//
-//    @tailrec
-//    def parseObject(r: CharReader): (CharReader, Value) =
-//      val r1 = skipWhitespace(r)
-//
-//      r1.ch match
-//        case ',' if buf.nonEmpty =>
-//          val (r2, v) = parseValue(r1.next)
-//
-//          buf += v
-//          parseArray(r2)
-//        case '}' => (r1.next, ArrayValue(buf.toList))
-//        case _ if buf.isEmpty =>
-//          val (r2, v) = parseValue(r1)
-//
-//          buf += v
-//          parseArray(r2)
-//        case _ => r1.error("expected ',' or '}'")
-//
-//    parseObject(r)
+  def parseObject(r: CharReader): (CharReader, Value) =
+    val buf = new ListBuffer[(String, Value)]
+
+    def parseIdentifier(r: CharReader): (CharReader, String) =
+      val (r1, s) = consumeWhile(r, c => c.isLetterOrDigit || c == '_')
+
+      if identifierRegex matches s then (skipWhitespace(r1), s)
+      else r.error("valid identifier expected")
+
+    def parseProperty(r: CharReader): CharReader =
+      val (r1, s) = parseIdentifier(r)
+
+      if r1.ch != ':' then r1.error("':' expected")
+
+      val (r2, v) = parseValue(skipWhitespace(r1.next))
+
+      buf += (s -> v)
+      skipWhitespace(r2)
+
+    @tailrec
+    def parseObject(r: CharReader): (CharReader, ObjectValue) =
+      r.ch match
+        case ',' if buf.nonEmpty => parseObject(parseProperty(skipWhitespace(r.next)))
+        case '}'                 => (skipWhitespace(r.next), ObjectValue(ListMap from buf.toList))
+        case _ if buf.isEmpty    => parseObject(parseProperty(skipWhitespace(r)))
+        case _                   => r.error("expected ',' or '}'")
+
+    parseObject(r)
 
   @tailrec
   def skipWhitespace(r: CharReader): CharReader =
