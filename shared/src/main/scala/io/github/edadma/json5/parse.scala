@@ -21,7 +21,7 @@ def parse(r: CharReader): Value =
 
         (skipWhitespace(r1), NumberValue(n))
       case '[' => parseArray(skipWhitespace(r.next))
-//      case '{' => parseObject(skipWhitespace(r.next))
+      case '{' => parseObject(skipWhitespace(r.next))
       case 'n' | 't' | 'f' =>
         val (r1, s) = consumeWhile(r, _.isLetter)
         val r2 = skipWhitespace(r1)
@@ -61,12 +61,12 @@ def parse(r: CharReader): Value =
       val (r1, s) = consumeWhile(r, c => c.isLetterOrDigit || c == '_')
 
       if identifierRegex matches s then (skipWhitespace(r1), s)
-      else r.error("valid identifier expected")
+      else r.error("a valid identifier was expected")
 
     def parseProperty(r: CharReader): CharReader =
       val (r1, s) = parseIdentifier(r)
 
-      if r1.ch != ':' then r1.error("':' expected")
+      if r1.ch != ':' then r1.error("a ':' was expected")
 
       val (r2, v) = parseValue(skipWhitespace(r1.next))
 
@@ -103,4 +103,4 @@ def parse(r: CharReader): Value =
   val (r1, value) = parseValue(skipWhitespace(r))
 
   if r1.eoi then value
-  else r1.error("end of input expected")
+  else r1.error("end of input was expected")
