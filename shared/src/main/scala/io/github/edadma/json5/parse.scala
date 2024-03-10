@@ -34,10 +34,16 @@ def parse(r: CharReader): Value =
       case _          => r.error("a value was expected")
 
   def parseNumeric(r: CharReader): (CharReader, NumericValue) =
-    val (r1, n) =
-      consumeWhile(r, c => c.isDigit || c == '.' || c == 'x' || c == 'e' || c == 'E' || c == '-' || c == '+')
+    val (r1, neg) =
+      r.ch match
+        case '-' => (r.next, true)
+        case '+' => (r.next, false)
+        case _   => (r, false)
 
-    (skipWhitespace(r1), NumberValue(n))
+    val (r2, n) =
+      consumeWhile(r1, c => c.isDigit || c == '.' || c == 'x' || c == 'e' || c == 'E' || c == '-' || c == '+')
+
+    (skipWhitespace(r2), NumberValue(if neg then s"-$n" else n))
 
   def parseString(r: CharReader): (CharReader, StringValue) =
     val delim = r.ch

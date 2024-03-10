@@ -8,3 +8,11 @@ class NumberTests extends AnyFreeSpec with Matchers:
   "number" in {
     parseFromString(" 123 ") shouldBe NumberValue("123")
   }
+
+  "positive number" in {
+    parseFromString(" +123 ") shouldBe NumberValue("123")
+  }
+
+  "negative number" in {
+    parseFromString(" -123 ") shouldBe NumberValue("-123")
+  }
