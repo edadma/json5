@@ -6,8 +6,8 @@ abstract class Value
 
 abstract class NumericValue extends Value
 
-case class DoubleValue(n: Double) extends Value
 case class NumberValue(n: String) extends NumericValue
+case class HexadecimalValue(h: String) extends NumericValue
 case class BooleanValue(b: Boolean) extends Value
 case class StringValue(s: String) extends Value
 case class ArrayValue(a: Seq[Value]) extends Value

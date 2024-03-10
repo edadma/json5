@@ -50,7 +50,7 @@ class NumberTests extends AnyFreeSpec with Matchers:
   }
 
   "hex" in {
-    parseFromString(" 0x123 ") shouldBe NumberValue("0x123")
+    parseFromString(" 0x123 ") shouldBe HexadecimalValue("123")
   }
 
   "bad number 1" in {
@@ -71,4 +71,16 @@ class NumberTests extends AnyFreeSpec with Matchers:
 
   "bad number 5" in {
     a[RuntimeException] should be thrownBy { parseFromString("0..1") }
+  }
+
+  "bad number 6" in {
+    a[RuntimeException] should be thrownBy { parseFromString("0x") }
+  }
+
+  "bad number 7" in {
+    a[RuntimeException] should be thrownBy { parseFromString("1A") }
+  }
+
+  "bad number 8" in {
+    a[RuntimeException] should be thrownBy { parseFromString("0A") }
   }
