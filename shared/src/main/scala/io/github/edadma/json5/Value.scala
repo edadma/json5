@@ -11,7 +11,7 @@ case class HexadecimalValue(h: String) extends NumericValue
 case class BooleanValue(b: Boolean) extends Value
 case class StringValue(s: String) extends Value
 case class ArrayValue(a: Seq[Value]) extends Value
-case class ObjectValue(a: ListMap[String, Value]) extends Value
+case class ObjectValue(a: Map[String, Value]) extends Value
 case object NullValue extends Value
 case object InfinityValue extends NumericValue
 case object NegativeInfinityValue extends NumericValue
