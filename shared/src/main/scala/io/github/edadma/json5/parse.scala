@@ -88,9 +88,11 @@ def parse(r: CharReader): Value =
     parseObject(r)
 
   @tailrec
-  def skipWhitespace(r: CharReader): CharReader =
-    if r.ch == ' ' || r.ch == '\n' || r.ch == '\t' then skipWhitespace(r.next)
+  def skipWhile(r: CharReader, pred: Char => Boolean): CharReader =
+    if pred(r.ch) then skipWhile(r.next, pred)
     else r
+
+  def skipWhitespace(r: CharReader): CharReader = skipWhile(r, c => c == ' ' || c == '\n' || c == '\t')
 
   def consumeWhile(r: CharReader, pred: Char => Boolean): (CharReader, String) =
     val buf = new StringBuilder
