@@ -9,8 +9,12 @@ class NumberTests extends AnyFreeSpec with Matchers:
     parseFromString(" 123 ") shouldBe NumberValue("123")
   }
 
-  "integer + exponent" in {
+  "integer with exponent" in {
     parseFromString(" 123e+02 ") shouldBe NumberValue("123e+02")
+  }
+
+  "integer with negative exponent" in {
+    parseFromString(" 123e-02 ") shouldBe NumberValue("123e-02")
   }
 
   "positive number" in {
@@ -25,7 +29,7 @@ class NumberTests extends AnyFreeSpec with Matchers:
     parseFromString(" .123 ") shouldBe NumberValue(".123")
   }
 
-  "leading decimal + exponent" in {
+  "leading decimal with exponent" in {
     parseFromString(" .123e+02 ") shouldBe NumberValue(".123e+02")
   }
 
@@ -33,7 +37,7 @@ class NumberTests extends AnyFreeSpec with Matchers:
     parseFromString(" 123. ") shouldBe NumberValue("123.")
   }
 
-  "trailing decimal + exponent" in {
+  "trailing decimal with exponent" in {
     parseFromString(" 123.e+02 ") shouldBe NumberValue("123.e+02")
   }
 
@@ -41,7 +45,7 @@ class NumberTests extends AnyFreeSpec with Matchers:
     parseFromString(" 0.123 ") shouldBe NumberValue("0.123")
   }
 
-  "decimal + exponent" in {
+  "decimal with exponent" in {
     parseFromString(" 0.123e+02 ") shouldBe NumberValue("0.123e+02")
   }
 

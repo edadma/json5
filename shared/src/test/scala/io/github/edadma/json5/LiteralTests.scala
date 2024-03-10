@@ -25,6 +25,14 @@ class LiteralTests extends AnyFreeSpec with Matchers:
     parseFromString(" Infinity ") shouldBe InfinityValue
   }
 
+  "+Infinity" in {
+    parseFromString(" +Infinity ") shouldBe InfinityValue
+  }
+
+  "-Infinity" in {
+    parseFromString(" -Infinity ") shouldBe NegativeInfinityValue
+  }
+
   "bad literal 1" in {
     a[RuntimeException] should be thrownBy { parseFromString("asdf") }
   }

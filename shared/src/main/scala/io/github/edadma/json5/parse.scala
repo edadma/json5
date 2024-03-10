@@ -47,7 +47,7 @@ def parse(r: CharReader): Value =
 
       s match
         case "NaN"      => (r3, NaNValue)
-        case "Infinity" => (r3, InfinityValue)
+        case "Infinity" => (r3, if sign == "-" then NegativeInfinityValue else InfinityValue)
         case _          => r.error("unknown signed literal")
     else
       val (r2, n) =
