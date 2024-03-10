@@ -15,12 +15,10 @@ private val identifierRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
 def parse(r: CharReader): Value =
   def parseValue(r: CharReader): (CharReader, Value) =
     r.ch match
-      case d if d.isDigit =>
-        val (r1, n) = consumeWhile(r, c => c.isDigit || c == '.')
-
-        (skipWhitespace(r1), NumberValue(n))
-      case '[' => parseArray(skipWhitespace(r.next))
-      case '{' => parseObject(skipWhitespace(r.next))
+      case '+' | '-' | '.' => parseNumeric(r)
+      case c if c.isDigit  => parseNumeric(r)
+      case '['             => parseArray(skipWhitespace(r.next))
+      case '{'             => parseObject(skipWhitespace(r.next))
       case 'n' | 't' | 'f' =>
         val (r1, s) = consumeWhile(r, _.isLetter)
         val r2 = skipWhitespace(r1)
@@ -32,6 +30,12 @@ def parse(r: CharReader): Value =
           case _       => r.error("unknown literal")
       case '\'' | '"' => parseString(r)
       case _          => r.error("a value was expected")
+
+  def parseNumeric(r: CharReader): (CharReader, NumericValue) =
+    val (r1, n) =
+      consumeWhile(r, c => c.isDigit || c == '.' || c == 'x' || c == 'e' || c == 'E' || c == '-' || c == '+')
+
+    (skipWhitespace(r1), NumberValue(n))
 
   def parseString(r: CharReader): (CharReader, StringValue) =
     val delim = r.ch
