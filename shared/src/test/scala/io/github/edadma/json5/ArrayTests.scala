@@ -13,12 +13,24 @@ class ArrayTests extends AnyFreeSpec with Matchers:
     parseFromString(" [ 3 ] ") shouldBe ArrayValue(Seq(NumberValue("3")))
   }
 
-  "two item array" in {
+  "one item array with trailing comma" in {
+    parseFromString(" [ 3 , ] ") shouldBe ArrayValue(Seq(NumberValue("3")))
+  }
+
+  "two items array" in {
     parseFromString(" [ 3 , 4 ] ") shouldBe ArrayValue(Seq(NumberValue("3"), NumberValue("4")))
   }
 
-  "three item array" in {
+  "two items array with trailing comma" in {
+    parseFromString(" [ 3 , 4 , ] ") shouldBe ArrayValue(Seq(NumberValue("3"), NumberValue("4")))
+  }
+
+  "three items array" in {
     parseFromString(" [ 3 , 4 , 5 ] ") shouldBe ArrayValue(Seq(NumberValue("3"), NumberValue("4"), NumberValue("5")))
+  }
+
+  "three items array with trailing comma" in {
+    parseFromString(" [ 3 , 4 , 5 , ] ") shouldBe ArrayValue(Seq(NumberValue("3"), NumberValue("4"), NumberValue("5")))
   }
 
   "array within array" in {
@@ -38,12 +50,6 @@ class ArrayTests extends AnyFreeSpec with Matchers:
   }
 
   "bad array 3" in {
-    a[RuntimeException] should be thrownBy {
-      parseFromString("[3,]")
-    }
-  }
-
-  "bad array 4" in {
     a[RuntimeException] should be thrownBy {
       parseFromString("[,4]")
     }

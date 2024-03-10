@@ -1,7 +1,6 @@
 package io.github.edadma.json5
 
 import io.github.edadma.char_reader.CharReader
-import io.github.edadma.char_reader.CharReader.EOI
 
 import scala.annotation.tailrec
 import scala.collection.immutable.ListMap
@@ -33,22 +32,22 @@ def parse(r: CharReader): Value =
           case _       => r.error("unknown literal")
       case _ => r.error("a value was expected")
 
-  def parseArray(r: CharReader): (CharReader, Value) =
+  def parseArray(r: CharReader): (CharReader, ArrayValue) =
     val buf = new ListBuffer[Value]
+    var comma: Boolean = false
 
     @tailrec
-    def parseArray(r: CharReader): (CharReader, Value) =
+    def parseArray(r: CharReader): (CharReader, ArrayValue) =
       r.ch match
-        case ',' if buf.nonEmpty =>
-          val (r1, v) = parseValue(skipWhitespace(r.next))
-
-          buf += v
-          parseArray(r1)
         case ']' => (skipWhitespace(r.next), ArrayValue(buf.toList))
-        case _ if buf.isEmpty =>
+        case ',' if comma =>
+          comma = false
+          parseArray(skipWhitespace(r.next))
+        case _ if !comma =>
           val (r1, v) = parseValue(r)
 
           buf += v
+          comma = true
           parseArray(r1)
         case _ => r.error("expected ',' or ']'")
 
