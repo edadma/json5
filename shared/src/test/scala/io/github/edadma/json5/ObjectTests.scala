@@ -33,25 +33,25 @@ class OjectTests extends AnyFreeSpec with Matchers:
     )
   }
 
-  "bad array 1" in {
-    a[RuntimeException] should be thrownBy { parseFromString("[,]") }
+  "bad object 1" in {
+    a[RuntimeException] should be thrownBy { parseFromString("{,}") }
   }
 
-  "bad array 2" in {
+  "bad object 2" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("[3 4]")
+      parseFromString("{3 4}")
     }
   }
 
-  "bad array 3" in {
+  "bad object 3" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("[3,]")
+      parseFromString("{3,}")
     }
   }
 
-  "bad array 4" in {
+  "bad object 4" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("[,4]")
+      parseFromString("{,4}")
     }
   }
 
