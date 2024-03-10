@@ -6,7 +6,27 @@ import org.scalatest.matchers.should.Matchers
 class CommentTests extends AnyFreeSpec with Matchers:
 
   "multi 1" in {
-    parseFromString(" /* 456 */ 123 ") shouldBe NumberValue("123")
+    parseFromString(" /* asdf */ 123 /* zxcv */  ") shouldBe NumberValue("123")
+  }
+
+  "multi 2" in {
+    parseFromString("""
+        |/**
+        |  asdf
+        |  zxcv
+        |  */
+        |123
+        |""".stripMargin) shouldBe NumberValue("123")
+  }
+
+  "bad multi 1" in {
+    a[RuntimeException] should be thrownBy { parseFromString("/* 456 ") }
+  }
+
+  "bad multi 2" in {
+    a[RuntimeException] should be thrownBy {
+      parseFromString("/*")
+    }
   }
 
   "line 1" in {

@@ -1,6 +1,7 @@
 package io.github.edadma.json5
 
 import io.github.edadma.char_reader.CharReader
+import io.github.edadma.char_reader.CharReader.EOI
 
 import scala.annotation.tailrec
 import scala.collection.immutable.ListMap
@@ -100,6 +101,7 @@ def parse(r: CharReader): Value =
       @tailrec
       def skipComment(r: CharReader): CharReader =
         if r.ch == '*' && r.next.ch == '/' then skipWhitespace(r.next.next)
+        else if r.ch == EOI then r.error("unclosed comment")
         else skipComment(r.next)
 
       skipWhitespace(skipComment(r.next.next))
