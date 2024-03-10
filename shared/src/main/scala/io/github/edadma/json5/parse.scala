@@ -60,11 +60,27 @@ def parse(r: CharReader): Value =
       else r.error("invalid numeric literal")
 
   def parseString(r: CharReader): (CharReader, StringValue) =
+    val buf = new StringBuilder
     val delim = r.ch
-    val (r1, s) = consumeWhile(r.next, _ != delim)
+
+    @tailrec
+    def consume(r: CharReader): CharReader =
+      r.ch match
+        case `delim` => r.next
+        case '\\' =>
+          r.next.ch match
+            case 'b' =>
+              buf += '\b'
+              consume(r.next.next)
+            case _ => r.next.error("unknown escape")
+        case c =>
+          buf += c
+          consume(r.next)
+
+    val r1 = consume(r.next)
 
     if r1.eoi then r1.error("unclosed string")
-    else (skipWhitespace(r1.next), StringValue(s))
+    else (skipWhitespace(r1), StringValue(buf.toString))
 
   def parseArray(r: CharReader): (CharReader, ArrayValue) =
     val buf = new ListBuffer[Value]

@@ -16,3 +16,7 @@ class StringTests extends AnyFreeSpec with Matchers:
   "bad string using single quotes" in {
     a[RuntimeException] should be thrownBy { parseFromString(" 'asdf ") }
   }
+
+  "string escapes" in {
+    parseFromString(raw" '\b' ") shouldBe StringValue(" \b ")
+  }
