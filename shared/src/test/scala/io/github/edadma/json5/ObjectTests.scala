@@ -76,3 +76,9 @@ class ObjectTests extends AnyFreeSpec with Matchers:
       parseFromString("{a:}")
     }
   }
+
+  "bad object 6" in {
+    a[RuntimeException] should be thrownBy {
+      parseFromString("{a:3")
+    }
+  }
