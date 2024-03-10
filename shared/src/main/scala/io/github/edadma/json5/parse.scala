@@ -71,6 +71,7 @@ def parseValue(r: CharReader): Value =
     consumeWhile(r)
 
   val (r1, value) = parseValue(r)
+  val r2 = skipWhitespace(r1)
 
-  if skipWhitespace(r1).eoi then value
-  else r1.error("end of input expected")
+  if r2.eoi then value
+  else r2.error("end of input expected")

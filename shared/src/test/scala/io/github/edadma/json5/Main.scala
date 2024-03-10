@@ -4,7 +4,7 @@ import pprint.pprintln
 
 @main def run(): Unit =
   val v = parseValueFromString(
-    """[3,]""",
+    """null4""",
   )
 
   pprintln(v)

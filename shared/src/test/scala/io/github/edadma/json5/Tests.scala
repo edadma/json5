@@ -31,6 +31,28 @@ class Tests extends AnyFreeSpec with Matchers:
     )
   }
 
+  "bad array 1" in {
+    a[RuntimeException] should be thrownBy { parseValueFromString("[,]") }
+  }
+
+  "bad array 2" in {
+    a[RuntimeException] should be thrownBy {
+      parseValueFromString("[3 4]")
+    }
+  }
+
+  "bad array 3" in {
+    a[RuntimeException] should be thrownBy {
+      parseValueFromString("[3,]")
+    }
+  }
+
+  "bad array 4" in {
+    a[RuntimeException] should be thrownBy {
+      parseValueFromString("[,4]")
+    }
+  }
+
   "null" in {
     parseValueFromString("null") shouldBe NullValue
   }
@@ -41,4 +63,16 @@ class Tests extends AnyFreeSpec with Matchers:
 
   "false" in {
     parseValueFromString("false") shouldBe BooleanValue(false)
+  }
+
+  "bad literal 1" in {
+    a[RuntimeException] should be thrownBy { parseValueFromString("asdf") }
+  }
+
+  "bad literal 2" in {
+    a[RuntimeException] should be thrownBy { parseValueFromString("nullx") }
+  }
+
+  "bad literal 3" in {
+    a[RuntimeException] should be thrownBy { parseValueFromString("null5") }
   }
