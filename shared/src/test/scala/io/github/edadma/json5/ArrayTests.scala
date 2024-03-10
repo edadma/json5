@@ -54,3 +54,9 @@ class ArrayTests extends AnyFreeSpec with Matchers:
       parseFromString("[,4]")
     }
   }
+
+  "bad array 4" in {
+    a[RuntimeException] should be thrownBy {
+      parseFromString("[3")
+    }
+  }
