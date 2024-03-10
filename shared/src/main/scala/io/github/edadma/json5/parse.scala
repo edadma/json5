@@ -11,7 +11,8 @@ def parseFromString(input: String): Value = parse(CharReader.fromString(input))
 def parseFromFile(file: String): Value = parse(CharReader.fromFile(file))
 
 private val identifierRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
-private val numberRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
+//private val numberRegex = "0[xX][0-9a-fA-F]+|(?:(?:[1-9]\\d*|0)(?:\\.\\d+)?|\\.\\d+)(?:[eE][-+]?\\d+)?".r
+private val numberRegex = raw"0x[0-9a-fA-F]+|(([1-9]\d*|0)(\.\d*)?|\.\d+)([eE][-+]?\d+)?".r
 
 def parse(r: CharReader): Value =
   def parseValue(r: CharReader): (CharReader, Value) =
@@ -44,7 +45,8 @@ def parse(r: CharReader): Value =
     val (r2, n) =
       consumeWhile(r1, c => c.isDigit || ".xX-+aAbBcCdDeEfF".contains(c))
 
-    (skipWhitespace(r2), NumberValue(if neg then s"-$n" else n))
+    if numberRegex matches n then (skipWhitespace(r2), NumberValue(if neg then s"-$n" else n))
+    else r.error("invalid numeric literal")
 
   def parseString(r: CharReader): (CharReader, StringValue) =
     val delim = r.ch
