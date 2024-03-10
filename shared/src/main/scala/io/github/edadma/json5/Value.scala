@@ -1,7 +1,5 @@
 package io.github.edadma.json5
 
-import scala.collection.immutable.ListMap
-
 abstract class Value
 
 abstract class NumericValue extends Value
