@@ -103,7 +103,7 @@ def parse(r: CharReader): Value =
 
   @tailrec
   def skipWhitespace(r: CharReader): CharReader =
-    if r.ch == ' ' || r.ch == '\n' || r.ch == '\t' then skipWhitespace(r.next)
+    if r.ch.isWhitespace then skipWhitespace(r.next)
     else if r.ch == '/' && r.next.ch == '/' then skipWhitespace(skipWhile(r.next.next, _ != '\n'))
     else if r.ch == '/' && r.next.ch == '*' then
       @tailrec
