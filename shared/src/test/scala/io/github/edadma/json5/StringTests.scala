@@ -12,3 +12,7 @@ class StringTests extends AnyFreeSpec with Matchers:
   "string using double quotes" in {
     parseFromString(""" "asdf" """) shouldBe StringValue("asdf")
   }
+
+  "bad string using single quotes" in {
+    a[RuntimeException] should be thrownBy { parseFromString(" 'asdf ") }
+  }

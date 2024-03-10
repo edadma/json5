@@ -38,7 +38,8 @@ def parse(r: CharReader): Value =
     val delim = r.ch
     val (r1, s) = consumeWhile(r.next, _ != delim)
 
-    (skipWhitespace(r1.next), StringValue(s))
+    if r1.eoi then r1.error("unclosed string")
+    else (skipWhitespace(r1.next), StringValue(s))
 
   def parseArray(r: CharReader): (CharReader, ArrayValue) =
     val buf = new ListBuffer[Value]
@@ -119,8 +120,9 @@ def parse(r: CharReader): Value =
 
     @tailrec
     def consumeWhile(r: CharReader): (CharReader, String) =
-      if pred(r.ch) then
+      if pred(r.ch) && r.more then
         buf += r.ch
+
         consumeWhile(r.next)
       else (r, buf.toString)
 
