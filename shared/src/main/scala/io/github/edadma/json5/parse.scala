@@ -11,7 +11,6 @@ def parseFromString(input: String): Value = parse(CharReader.fromString(input))
 def parseFromFile(file: String): Value = parse(CharReader.fromFile(file))
 
 private val identifierRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
-//private val numberRegex = "0[xX][0-9a-fA-F]+|(?:(?:[1-9]\\d*|0)(?:\\.\\d+)?|\\.\\d+)(?:[eE][-+]?\\d+)?".r
 private val numberRegex = raw"0x[0-9a-fA-F]+|(([1-9]\d*|0)(\.\d*)?|\.\d+)([eE][-+]?\d+)?".r
 
 def parse(r: CharReader): Value =
@@ -36,17 +35,26 @@ def parse(r: CharReader): Value =
       case _          => r.error("a value was expected")
 
   def parseNumeric(r: CharReader): (CharReader, NumericValue) =
-    val (r1, neg) =
+    val (r1, sign) =
       r.ch match
-        case '-' => (r.next, true)
-        case '+' => (r.next, false)
-        case _   => (r, false)
+        case '-' => (r.next, "-")
+        case '+' => (r.next, "+")
+        case _   => (r, "")
 
-    val (r2, n) =
-      consumeWhile(r1, c => c.isDigit || ".xX-+aAbBcCdDeEfF".contains(c))
+    if sign.nonEmpty && (r1.ch == 'I' || r1.ch == 'N') then
+      val (r2, s) = consumeWhile(r1, _.isLetter)
+      val r3 = skipWhitespace(r2)
 
-    if numberRegex matches n then (skipWhitespace(r2), NumberValue(if neg then s"-$n" else n))
-    else r.error("invalid numeric literal")
+      s match
+        case "NaN"      => (r3, NaNValue)
+        case "Infinity" => (r3, InfinityValue)
+        case _          => r.error("unknown signed literal")
+    else
+      val (r2, n) =
+        consumeWhile(r1, c => c.isDigit || ".xX-+aAbBcCdDeEfF".contains(c))
+
+      if numberRegex matches n then (skipWhitespace(r2), NumberValue(if sign == "-" then s"-$n" else n))
+      else r.error("invalid numeric literal")
 
   def parseString(r: CharReader): (CharReader, StringValue) =
     val delim = r.ch
