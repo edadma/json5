@@ -39,42 +39,30 @@ class OjectTests extends AnyFreeSpec with Matchers:
 
   "bad object 2" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("{3 4}")
+      parseFromString("{a:3 4}")
     }
   }
 
   "bad object 3" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("{3,}")
+      parseFromString("{a:3,}")
     }
   }
 
   "bad object 4" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("{,4}")
+      parseFromString("{,b:4}")
     }
   }
 
-  "null" in {
-    parseFromString(" null ") shouldBe NullValue
+  "bad object 5" in {
+    a[RuntimeException] should be thrownBy {
+      parseFromString("{a}")
+    }
   }
 
-  "true" in {
-    parseFromString(" true ") shouldBe BooleanValue(true)
-  }
-
-  "false" in {
-    parseFromString(" false ") shouldBe BooleanValue(false)
-  }
-
-  "bad literal 1" in {
-    a[RuntimeException] should be thrownBy { parseFromString("asdf") }
-  }
-
-  "bad literal 2" in {
-    a[RuntimeException] should be thrownBy { parseFromString("nullx") }
-  }
-
-  "bad literal 3" in {
-    a[RuntimeException] should be thrownBy { parseFromString("null5") }
+  "bad object 6" in {
+    a[RuntimeException] should be thrownBy {
+      parseFromString("{a:}")
+    }
   }
