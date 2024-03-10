@@ -9,6 +9,11 @@ class StringTests extends AnyFreeSpec with Matchers:
     parseFromString(" 'asdf' ") shouldBe StringValue("asdf")
   }
 
+  "multi-line string" in {
+    parseFromString(""" "Look, Mom! \
+                      |No \\n's!" """.stripMargin) shouldBe StringValue("Look, Mom! \nNo \\n's!")
+  }
+
   "string using double quotes" in {
     parseFromString(""" "asdf" """) shouldBe StringValue("asdf")
   }

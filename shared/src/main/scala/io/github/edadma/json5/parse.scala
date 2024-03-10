@@ -69,6 +69,9 @@ def parse(r: CharReader): Value =
         case `delim` => r.next
         case '\\' =>
           r.next.ch match
+            case '\n' =>
+              buf += '\n'
+              consume(r.next.next)
             case '\'' =>
               buf += '\''
               consume(r.next.next)
