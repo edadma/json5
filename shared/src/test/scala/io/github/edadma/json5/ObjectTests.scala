@@ -15,6 +15,14 @@ class ObjectTests extends AnyFreeSpec with Matchers:
     parseFromString(" { a : 3 } ") shouldBe ObjectValue(ListMap("a" -> NumberValue("3")))
   }
 
+  "object with single quoted property name" in {
+    parseFromString(" { 'a' : 3 } ") shouldBe ObjectValue(ListMap("a" -> NumberValue("3")))
+  }
+
+  "object with double quoted property name" in {
+    parseFromString(""" { "a" : 3 } """) shouldBe ObjectValue(ListMap("a" -> NumberValue("3")))
+  }
+
   "one property object with trailing comma" in {
     parseFromString(" { a : 3 , } ") shouldBe ObjectValue(ListMap("a" -> NumberValue("3")))
   }

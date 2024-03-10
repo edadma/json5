@@ -69,10 +69,15 @@ def parse(r: CharReader): Value =
       val (r1, s) = consumeWhile(r, c => c.isLetterOrDigit || c == '_')
 
       if identifierRegex matches s then (skipWhitespace(r1), s)
-      else r.error("a valid identifier was expected")
+      else r.error("a valid identifier or string was expected")
 
     def parseProperty(r: CharReader): CharReader =
-      val (r1, s) = parseIdentifier(r)
+      val (r1, s) =
+        if r.ch == '\'' || r.ch == '"' then
+          val (r1, StringValue(s)) = parseString(r)
+
+          (r1, s)
+        else parseIdentifier(r)
 
       if r1.ch != ':' then r1.error("a ':' was expected")
 
