@@ -10,7 +10,7 @@ def parseFromString(input: String): Value = parse(CharReader.fromString(input))
 
 def parseFromFile(file: String): Value = parse(CharReader.fromFile(file))
 
-private val identifierRegex = "[_a-zA-Z][_a-zA-Z0-9]*".r
+private val identifierRegex = "[_$a-zA-Z][_$a-zA-Z0-9]*".r
 private val numberRegex = raw"0x[0-9a-fA-F]+|(([1-9]\d*|0)(\.\d*)?|\.\d+)([eE][-+]?\d+)?".r
 
 def parse(r: CharReader): Value =
@@ -92,7 +92,7 @@ def parse(r: CharReader): Value =
     var comma: Boolean = false
 
     def parseIdentifier(r: CharReader): (CharReader, String) =
-      val (r1, s) = consumeWhile(r, c => c.isLetterOrDigit || c == '_')
+      val (r1, s) = consumeWhile(r, c => c.isLetterOrDigit || c == '_' || c == '$')
 
       if identifierRegex matches s then (skipWhitespace(r1), s)
       else r.error("a valid identifier or string was expected")
