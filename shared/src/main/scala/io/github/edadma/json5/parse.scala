@@ -6,52 +6,77 @@ import io.github.edadma.char_reader.CharReader.EOI
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
 
-def parseValueFromString(input: String): Value = parseValue(CharReader.fromString(input))
+def parseFromString(input: String): Value = parse(CharReader.fromString(input))
 
-def parseValueFromFile(file: String): Value = parseValue(CharReader.fromFile(file))
+def parseFromFile(file: String): Value = parse(CharReader.fromFile(file))
 
-def parseValue(r: CharReader): Value =
+def parse(r: CharReader): Value =
   def parseValue(r: CharReader): (CharReader, Value) =
-    val r1 = skipWhitespace(r)
-
-    r1.ch match
+    r.ch match
       case d if d.isDigit =>
-        val (r2, n) = consumeWhile(r1, c => c.isDigit || c == '.')
+        val (r1, n) = consumeWhile(r, c => c.isDigit || c == '.')
 
-        (r2, NumberValue(n))
-      case '[' => parseArray(r1.next)
+        (skipWhitespace(r1), NumberValue(n))
+      case '[' => parseArray(r.next)
+//      case '{' => parseObject(r.next)
       case 'n' | 't' | 'f' =>
-        val (r2, s) = consumeWhile(r1, _.isLetter)
+        val (r1, s) = consumeWhile(r, _.isLetter)
+        val r2 = skipWhitespace(r1)
 
         s match
           case "null"  => (r2, NullValue)
           case "true"  => (r2, BooleanValue(true))
           case "false" => (r2, BooleanValue(false))
-          case _       => r2.error("unknown literal")
+          case _       => r.error("unknown literal")
       case _ => r.error("a value was expected")
-  end parseValue
 
   def parseArray(r: CharReader): (CharReader, Value) =
     val buf = new ListBuffer[Value]
 
     @tailrec
     def parseArray(r: CharReader): (CharReader, Value) =
-      val r1 = skipWhitespace(r)
-
-      r1.ch match
+      r.ch match
         case ',' if buf.nonEmpty =>
-          val (r2, v) = parseValue(r1.next)
+          val (r1, v) = parseValue(skipWhitespace(r.next))
 
           buf += v
-          parseArray(r2)
-        case ']' => (r1.next, ArrayValue(buf.toList))
+          parseArray(r1)
+        case ']' => (skipWhitespace(r.next), ArrayValue(buf.toList))
         case _ if buf.isEmpty =>
-          val (r2, v) = parseValue(r1)
+          val (r1, v) = parseValue(r)
 
           buf += v
-          parseArray(r2)
-        case _ => r1.error("expected ',' or ']'")
+          parseArray(r1)
+        case _ => r.error("expected ',' or ']'")
+
     parseArray(r)
+
+//  def parseObject(r: CharReader): (CharReader, Value) =
+//    val buf = new ListBuffer[(String, Value)]
+//
+//    def parseIdentifier(r: CharReader): (CharReader, String) =
+//
+//    def parseProperty(r: CharReader): Unit =
+//
+//    @tailrec
+//    def parseObject(r: CharReader): (CharReader, Value) =
+//      val r1 = skipWhitespace(r)
+//
+//      r1.ch match
+//        case ',' if buf.nonEmpty =>
+//          val (r2, v) = parseValue(r1.next)
+//
+//          buf += v
+//          parseArray(r2)
+//        case '}' => (r1.next, ArrayValue(buf.toList))
+//        case _ if buf.isEmpty =>
+//          val (r2, v) = parseValue(r1)
+//
+//          buf += v
+//          parseArray(r2)
+//        case _ => r1.error("expected ',' or '}'")
+//
+//    parseObject(r)
 
   @tailrec
   def skipWhitespace(r: CharReader): CharReader =
@@ -70,8 +95,7 @@ def parseValue(r: CharReader): Value =
 
     consumeWhile(r)
 
-  val (r1, value) = parseValue(r)
-  val r2 = skipWhitespace(r1)
+  val (r1, value) = parseValue(skipWhitespace(r))
 
-  if r2.eoi then value
-  else r2.error("end of input expected")
+  if r1.eoi then value
+  else r1.error("end of input expected")
