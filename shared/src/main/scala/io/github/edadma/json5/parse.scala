@@ -4,12 +4,47 @@ import io.github.edadma.char_reader.CharReader
 import io.github.edadma.char_reader.CharReader.EOI
 
 import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
 
 def parseValueFromString(input: String): Value = parseValue(CharReader.fromString(input))
 
 def parseValueFromFile(file: String): Value = parseValue(CharReader.fromFile(file))
 
 def parseValue(r: CharReader): Value =
+  def parseValue(r: CharReader): (CharReader, Value) =
+    val r1 = skipWhitespace(r)
+
+    r1.ch match
+      case d if d.isDigit =>
+        val (r2, n) = consumeWhile(r1, c => c.isDigit || c == '.')
+
+        (r2, NumberValue(n))
+      case '[' => parseArray(r1.next)
+      case _   => r.error("a value was expected")
+  end parseValue
+
+  def parseArray(r: CharReader): (CharReader, Value) =
+    val buf = new ListBuffer[Value]
+
+    @tailrec
+    def parseArray(r: CharReader): (CharReader, Value) =
+      val r1 = skipWhitespace(r)
+
+      r1.ch match
+        case ',' if buf.nonEmpty =>
+          val (r2, v) = parseValue(r1.next)
+
+          buf += v
+          parseArray(r2)
+        case ']' => (r1.next, ArrayValue(buf.toList))
+        case _ =>
+          val (r2, v) = parseValue(r1)
+
+          buf += v
+          parseArray(r2)
+
+    parseArray(r)
+
   @tailrec
   def skipWhitespace(r: CharReader): CharReader =
     if r.ch == ' ' || r.ch == '\n' || r.ch == '\t' then skipWhitespace(r.next)
@@ -27,11 +62,7 @@ def parseValue(r: CharReader): Value =
 
     consumeWhile(r)
 
-  val r1 = skipWhitespace(r)
+  val (r1, value) = parseValue(r)
 
-  r1.ch match
-    case EOI => r.error("a value was expected")
-    case d if d.isDigit =>
-      val (r2, n) = consumeWhile(r1, c => c.isDigit || c == '.')
-
-      NumberValue(n)
+  if skipWhitespace(r1).eoi then value
+  else r1.error("end of input expected")
