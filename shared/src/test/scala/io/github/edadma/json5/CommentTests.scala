@@ -5,9 +5,9 @@ import org.scalatest.matchers.should.Matchers
 
 class CommentTests extends AnyFreeSpec with Matchers:
 
-//  "number" in {
-//    parseFromString(" /* 456 /* 123 ") shouldBe NumberValue("123")
-//  }
+  "multi 1" in {
+    parseFromString(" /* 456 */ 123 ") shouldBe NumberValue("123")
+  }
 
   "line 1" in {
     parseFromString("""

@@ -96,6 +96,13 @@ def parse(r: CharReader): Value =
   def skipWhitespace(r: CharReader): CharReader =
     if r.ch == ' ' || r.ch == '\n' || r.ch == '\t' then skipWhitespace(r.next)
     else if r.ch == '/' && r.next.ch == '/' then skipWhitespace(skipWhile(r.next.next, _ != '\n'))
+    else if r.ch == '/' && r.next.ch == '*' then
+      @tailrec
+      def skipComment(r: CharReader): CharReader =
+        if r.ch == '*' && r.next.ch == '/' then skipWhitespace(r.next.next)
+        else skipComment(r.next)
+
+      skipWhitespace(skipComment(r.next.next))
     else r
 
   def consumeWhile(r: CharReader, pred: Char => Boolean): (CharReader, String) =
