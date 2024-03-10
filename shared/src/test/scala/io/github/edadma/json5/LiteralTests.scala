@@ -17,6 +17,14 @@ class LiteralTests extends AnyFreeSpec with Matchers:
     parseFromString(" false ") shouldBe BooleanValue(false)
   }
 
+  "NaN" in {
+    parseFromString(" NaN ") shouldBe NaNValue
+  }
+
+  "Infinity" in {
+    parseFromString(" Infinity ") shouldBe InfinityValue
+  }
+
   "bad literal 1" in {
     a[RuntimeException] should be thrownBy { parseFromString("asdf") }
   }

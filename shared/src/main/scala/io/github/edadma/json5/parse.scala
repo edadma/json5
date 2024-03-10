@@ -19,15 +19,17 @@ def parse(r: CharReader): Value =
       case c if c.isDigit  => parseNumeric(r)
       case '['             => parseArray(skipWhitespace(r.next))
       case '{'             => parseObject(skipWhitespace(r.next))
-      case 'n' | 't' | 'f' =>
+      case 'n' | 't' | 'f' | 'N' | 'I' =>
         val (r1, s) = consumeWhile(r, _.isLetter)
         val r2 = skipWhitespace(r1)
 
         s match
-          case "null"  => (r2, NullValue)
-          case "true"  => (r2, BooleanValue(true))
-          case "false" => (r2, BooleanValue(false))
-          case _       => r.error("unknown literal")
+          case "null"     => (r2, NullValue)
+          case "true"     => (r2, BooleanValue(true))
+          case "false"    => (r2, BooleanValue(false))
+          case "NaN"      => (r2, NaNValue)
+          case "Infinity" => (r2, InfinityValue)
+          case _          => r.error("unknown literal")
       case '\'' | '"' => parseString(r)
       case _          => r.error("a value was expected")
 
