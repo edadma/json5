@@ -55,6 +55,7 @@ def parse(r: CharReader): Value =
 
   def parseObject(r: CharReader): (CharReader, Value) =
     val buf = new ListBuffer[(String, Value)]
+    var comma: Boolean = false
 
     def parseIdentifier(r: CharReader): (CharReader, String) =
       val (r1, s) = consumeWhile(r, c => c.isLetterOrDigit || c == '_')
@@ -70,15 +71,19 @@ def parse(r: CharReader): Value =
       val (r2, v) = parseValue(skipWhitespace(r1.next))
 
       buf += (s -> v)
-      skipWhitespace(r2)
+      r2
 
     @tailrec
     def parseObject(r: CharReader): (CharReader, ObjectValue) =
       r.ch match
-        case ',' if buf.nonEmpty => parseObject(parseProperty(skipWhitespace(r.next)))
-        case '}'                 => (skipWhitespace(r.next), ObjectValue(ListMap from buf.toList))
-        case _ if buf.isEmpty    => parseObject(parseProperty(skipWhitespace(r)))
-        case _                   => r.error("expected ',' or '}'")
+        case ',' if comma =>
+          comma = false
+          parseObject(skipWhitespace(r.next))
+        case '}' => (skipWhitespace(r.next), ObjectValue(ListMap from buf.toList))
+        case _ if !comma =>
+          comma = true
+          parseObject(parseProperty(skipWhitespace(r)))
+        case _ => r.error("expected ',' or '}'")
 
     parseObject(r)
 

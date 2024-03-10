@@ -15,14 +15,30 @@ class ObjectTests extends AnyFreeSpec with Matchers:
     parseFromString(" { a : 3 } ") shouldBe ObjectValue(ListMap("a" -> NumberValue("3")))
   }
 
+  "one property object with trailing comma" in {
+    parseFromString(" { a : 3 , } ") shouldBe ObjectValue(ListMap("a" -> NumberValue("3")))
+  }
+
   "two property object" in {
     parseFromString(" { a : 3 , b : 4 } ") shouldBe ObjectValue(
       ListMap("a" -> NumberValue("3"), "b" -> NumberValue("4")),
     )
   }
 
+  "two property object with trailing comma" in {
+    parseFromString(" { a : 3 , b : 4 , } ") shouldBe ObjectValue(
+      ListMap("a" -> NumberValue("3"), "b" -> NumberValue("4")),
+    )
+  }
+
   "three property object" in {
     parseFromString(" { a : 3 , b : 4 , c : 5 } ") shouldBe ObjectValue(
+      ListMap("a" -> NumberValue("3"), "b" -> NumberValue("4"), "c" -> NumberValue("5")),
+    )
+  }
+
+  "three property object with trailing comma" in {
+    parseFromString(" { a : 3 , b : 4 , c : 5 , } ") shouldBe ObjectValue(
       ListMap("a" -> NumberValue("3"), "b" -> NumberValue("4"), "c" -> NumberValue("5")),
     )
   }
@@ -45,23 +61,17 @@ class ObjectTests extends AnyFreeSpec with Matchers:
 
   "bad object 3" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("{a:3,}")
+      parseFromString("{,b:4}")
     }
   }
 
   "bad object 4" in {
     a[RuntimeException] should be thrownBy {
-      parseFromString("{,b:4}")
-    }
-  }
-
-  "bad object 5" in {
-    a[RuntimeException] should be thrownBy {
       parseFromString("{a}")
     }
   }
 
-  "bad object 6" in {
+  "bad object 5" in {
     a[RuntimeException] should be thrownBy {
       parseFromString("{a:}")
     }
