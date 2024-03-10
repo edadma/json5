@@ -20,7 +20,15 @@ def parseValue(r: CharReader): Value =
 
         (r2, NumberValue(n))
       case '[' => parseArray(r1.next)
-      case _   => r.error("a value was expected")
+      case 'n' | 't' | 'f' =>
+        val (r2, s) = consumeWhile(r1, _.isLetter)
+
+        s match
+          case "null"  => (r2, NullValue)
+          case "true"  => (r2, BooleanValue(true))
+          case "false" => (r2, BooleanValue(false))
+          case _       => r2.error("unknown literal")
+      case _ => r.error("a value was expected")
   end parseValue
 
   def parseArray(r: CharReader): (CharReader, Value) =
@@ -37,12 +45,12 @@ def parseValue(r: CharReader): Value =
           buf += v
           parseArray(r2)
         case ']' => (r1.next, ArrayValue(buf.toList))
-        case _ =>
+        case _ if buf.isEmpty =>
           val (r2, v) = parseValue(r1)
 
           buf += v
           parseArray(r2)
-
+        case _ => r1.error("expected ',' or ']'")
     parseArray(r)
 
   @tailrec
