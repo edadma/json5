@@ -66,6 +66,8 @@ def parse(r: CharReader): Value =
 
     @tailrec
     def consume(r: CharReader): CharReader =
+      def hex(c: Char): Boolean = c.isDigit || 'a' <= c && c <= 'f' || 'A' <= c && c <= 'F'
+
       r.ch match
         case `delim` => r.next
         case '\\' =>
@@ -103,6 +105,25 @@ def parse(r: CharReader): Value =
             case '0' =>
               buf += '\u0000'
               consume(r.next.next)
+            case 'x' =>
+              if !r.next.next.more || !hex(r.next.next.ch) || !r.next.next.next.more || !hex(r.next.next.next.ch) then
+                r.next.next.error("two hex digits were expected")
+
+              buf += Integer.parseInt(s"${r.next.next.ch}${r.next.next.next.ch}", 16).toChar
+              consume(r.next.next.next.next)
+            case 'u' =>
+              if !r.next.next.more || !hex(r.next.next.ch) || !r.next.next.next.more || !hex(r.next.next.next.ch) ||
+                !r.next.next.next.next.more || !hex(r.next.next.next.next.ch) || !r.next.next.next.next.next.more ||
+                !hex(r.next.next.next.next.next.ch)
+              then r.next.next.error("four hex digits were expected")
+
+              buf += Integer
+                .parseInt(
+                  s"${r.next.next.ch}${r.next.next.next.ch}${r.next.next.next.next.ch}${r.next.next.next.next.next.ch}",
+                  16,
+                )
+                .toChar
+              consume(r.next.next.next.next.next.next)
             case _ => r.next.error("unknown escape")
         case c =>
           buf += c
