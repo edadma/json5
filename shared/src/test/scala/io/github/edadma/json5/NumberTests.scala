@@ -9,6 +9,10 @@ class NumberTests extends AnyFreeSpec with Matchers:
     parseFromString(" 123 ") shouldBe NumberValue("123")
   }
 
+  "negative integer" in {
+    parseFromString(" -123 ") shouldBe NumberValue("-123")
+  }
+
   "integer with exponent" in {
     parseFromString(" 123e+02 ") shouldBe NumberValue("123e+02")
   }
@@ -51,6 +55,10 @@ class NumberTests extends AnyFreeSpec with Matchers:
 
   "hex" in {
     parseFromString(" 0x123 ") shouldBe HexadecimalValue("123")
+  }
+
+  "negative hex" in {
+    parseFromString(" -0x123 ") shouldBe HexadecimalValue("-123")
   }
 
   "bad number 1" in {

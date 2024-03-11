@@ -54,9 +54,10 @@ def parse(r: CharReader): Value =
         consumeWhile(r1, c => c.isDigit || ".xX-+aAbBcCdDeEfF".contains(c))
 
       if numberRegex matches n then
-        val s = if sign == "-" then s"-$n" else n
+        val (n1, h) = if n.toLowerCase.startsWith("0x") then (n drop 2, true) else (n, false)
+        val s = if sign == "-" then s"-$n1" else n1
 
-        (skipWhitespace(r2), if s.toLowerCase.startsWith("0x") then HexadecimalValue(s drop 2) else NumberValue(s))
+        (skipWhitespace(r2), if h then HexadecimalValue(s) else NumberValue(s))
       else r.error("invalid numeric literal")
 
   def parseString(r: CharReader): (CharReader, StringValue) =

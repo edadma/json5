@@ -4,7 +4,8 @@ import pprint.pprintln
 
 @main def run(): Unit =
   val v = parseFromString(
-    raw""" '\b' """,
+    raw""" 0x123 """,
   )
 
-  pprintln(v.asInstanceOf[StringValue].s.toList.map(c => c.toInt))
+  pprintln(v)
+  pprintln(eval(v))
